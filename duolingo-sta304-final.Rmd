@@ -1,8 +1,9 @@
 ---
-title: "STA304-final-report"
+title: "Exploring Roadblocks to Second Language Acquisition"
 author: "Brian Diep"
-date: "26/11/2020"
+date: "09/12/2020"
 output: pdf_document
+tags: ["R Markdown", "Language Education", "Learning"]
 ---
 
 ```{r setup, include=FALSE}
@@ -14,31 +15,46 @@ library(dplyr)
 # Load dataset
 data <- read_csv("dataset/learning_traces.13m.csv")
 
+eng <- data %>%
+  filter(learning_language == "en")
+
+
 ```
 
+## Keywords
+
+R Markdown, Language Education, Learning
 
 ## Abstract
+
+  Second language education has typically been confined to a traditional classroom experience with a teacher. However with the advent of the Internet and accessible technology, digital language education has been immensely successful in part due to its scale and flexibility. However, one of the major benefits of digitizing language education is that it is now possible to collect data in real-time and simultaneously use it to improve the learning experience for users. It is therefore important that we analyze the relationship between user-model interactions, aspects of language, and language acquisition to improve language acquisition for all. We approach this problem by using data gathered from the popular language education app Duolingo, we seek to model any trends between using Bayesian linear regression. Through this methodology we find that (blah blah blah)
 
   
 ## Introduction
 
-  Many second language (L2) language learners. Although traditionally, we e. Although a key part of the electoral tradition is placed on the significance of each individual's vote, we can still find that almost all voters fall into broad categories that constitute voting blocs. These blocs can be united from many disparate categories such as age, race, and state of residence and many voters will identify with multiple blocs simultaneously. Although this is not an easy task, an analysis of these blocs can allow pollsters to predict the outcome of the federal election. For our purposes we use publicly available data from the Duolingo and census data from the 2018 American Community Survey (ACS) to use a multilevel regression with poststratification. 
-    
-  In order to create a Bayesian multilevel logistic model, variables associated with voter preference were extracted from the Nationscape study. In particular, age, state, income, race, gender, Hispanic identity and employment were decided upon as predictors since exploratory analysis of the data showed a significant relationship (p-value less than 0.05 via logistic regression models) between these variables and voting intentions. Poststratification was performed using the ACS data to incorporate the population distributions of the U.S. population. Our findings suggest that there is merit to an approach to second language acquisition that uses half life regression. 
+  Learning a second language is a difficult task for most adults who have passed the critical stage of language acquisition as children. However, that has not stopped second language education from being a core part of education systems across the world. Unfortunately, these systems often leave much to be desired as they lack the flexibility and scope necessary to truly learn a language. Outside of the traditional system of language education, the widespread proliferation of technology such as the Internet, personal computing, and mobile devices have allowed other actors to break into the language education, in particular mobile apps. One of the greatest benefits that these apps have is that they can take user performance metrics and use them to guide decisions on teaching users.
+  
+  In this report, we seek to explore this data driven approach using the free language education app Duolingo as a case study. The app has roughly 120 million users and is an example of one of the most popular of such language education apps available. We specifically focus on Duolingo's usage of spaced repetition as a method for teaching its users various grammar points. We also seek more braodly to identify any consistent roadblocks for second language learners that can be improved.
 
-   will continue to further explore the data sets used in our modelling, summarizing features of the data and visualizing variables of interest to our model. Next the features of our model and post-stratification process are described prior to simulating the election on the Electoral College. Finally, the prediction of Joe Biden's win will be investigated further and a discussion follows into strengths and weaknesses of the model, why this information is useful and further avenues of study. 
+  The remaining report will continue to further explore the data sets and methodologies used to gather the data, an analysis of the model used, results gathered from.  In particular. Our findings suggest that (fasdjflkasdjfklsadf). Furthermore, we discuss and investigate relationships between our predictor and response variables followed by a discussion of the strengths and weaknesses of the model, and further avenues of study. 
 
 ```{r cars}
 unique(data$ui_language)
 unique(data$learning_language)
 ```
 
-## Including Plots
+## Exploratory Data Analysis
 
-You can also embed plots, for example:
+## Model
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+## Results
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Discussion
+
+## Limitations and Weaknesses
+
+## Future Work
+
+## Appendix
+
+## References
