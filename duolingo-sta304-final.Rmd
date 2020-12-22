@@ -1,7 +1,7 @@
 ---
 title: "The Benefits of Spaced Repetition in Second Language Education"
 author: "Brian Diep"
-date: "09/12/2020"
+date: "12/22/2020"
 output: pdf_document
 tags: ["Spaced-Repetition", "Language Education", "Learning"]
 ---
@@ -20,6 +20,9 @@ library(ggplot2)
 # Load dataset
 data <- read_csv("dataset/learning_traces.13m.csv")
 
+#Set seed to student number
+set.seed(1004830043)
+
 ```
 
 ```{r setup3, include=FALSE}
@@ -30,6 +33,9 @@ data <- data %>%
 # Separate by language pairs
 data <- data %>%
   filter(ui_language %in% c("en", "it") & learning_language %in% c("es", "fr", "de", "en"))
+
+reduced_sample <- data %>%
+  sample_frac(0.1)
 
 eng_it <- data %>%
   filter(learning_language == "en" & ui_language == "it")
@@ -75,12 +81,11 @@ Spaced-Repetition, Language Education, Learning
   The probability of recall is the ratio that a user correctly recalled a given lexeme during one session. We manipulate this variable such that we consider that a user has "learned" the lexeme correctly if they have a probability of recall of 1 for the given session. This is an admittedly narrow and strict definition of learning but it reduces the likelihood that we include instances where a user guesses the correct answer and better models a user's ability to retain an information if they can consistently recall it perfectly and are not only tipped off to the correct answer when they make a mistake during practice sessions. 
   
   Delta in this analysis is the time measured in seconds between the last time the user encountered this lexeme and the current learning session. An assumption is also made that the UI language of the app corresponds to the native language of the speaker as most users are likely to have their devices set to the language that they are most comfortable using. Historical user data such as the number of times the user has encountered the same lexeme and the number of times they have correctly recalled it in past lessons were also stored.
-  
 
-```{r plots1, echo=FALSE, message=FALSE}
+```{r plots1, echo=FALSE, message=FALSE, include=FALSE}
 
 # Plot delta vs. recall rate for each language
-data %>%
+figure1 <- reduced_sample %>%
 ggplot(aes(x=delta, y=p_recall)) + 
   geom_point(aes(col=learning_language))+
   geom_smooth(aes(col=learning_language)) +
@@ -94,15 +99,25 @@ ggplot(aes(x=delta, y=p_recall)) +
                                    "de"="green",
                                    "en"="black"))
 
+#Save image
+ggsave("plots/figure1.png", plot=figure1)
+
 ```
+
+```{r figure1, echo=FALSE}
+#Plot figure from png
+knitr::include_graphics("plots/figure1.png")
+```
+
+  For this plot and the following plots, we have randomly sampled 10% of the data to simplify the graph while making salient the overall trends. The complete dataset is used for the analysis.
   
-  In Figure 1.1, when we plot the time between the last time an individual has seen a lexeme and their recall of that lexeme in their most recent session, we see a nice spread of observations from various values. We also see generally a slight trend that the user is less likely to correctly recall lexemes for which they were last reviewed a long time ago. This is consistent with our understanding that people are more likely to forget concepts that they have not seen recently.
+  In Figure 1, when we plot the time between the last time an individual has seen a lexeme and their recall of that lexeme in their most recent session, we see a nice spread of observations from various values. We also see generally a slight trend that the user is less likely to correctly recall lexemes for which they were last reviewed a long time ago. This is consistent with our understanding that people are more likely to forget concepts that they have not seen recently.
   
   
-```{r plots2, echo=FALSE, message=FALSE}
+```{r plots2, echo=FALSE, message=FALSE, include=FALSE}
 
 # Plot history vs. recall rate for each language
-data %>%
+figure2 <- reduced_sample %>%
 ggplot(aes(x=history_seen, y=p_recall)) + 
   geom_point(aes(col=learning_language))+
   geom_smooth(aes(col=learning_language)) +
@@ -116,7 +131,9 @@ ggplot(aes(x=history_seen, y=p_recall)) +
                                    "de"="green",
                                    "en"="black"))
 
-data %>%
+ggsave("plots/figure2.png", plot=figure2)
+
+figure3 <- reduced_sample %>%
 ggplot(aes(x=history_correct, y=p_recall)) + 
   geom_point(aes(col=learning_language))+
   geom_smooth(aes(col=learning_language)) +
@@ -130,17 +147,25 @@ ggplot(aes(x=history_correct, y=p_recall)) +
                                    "de"="green",
                                    "en"="black"))
 
+ggsave("plots/figure3.png", plot=figure3)
 ```
 
-  In Figure 1.2, we plot the number of times that an individual has been exposed to a given lexeme against their recall of that lexeme in their most recent session. We see generally a trend that the user is more likely to recall recently introduced lexemes as well as those that have been introduced over 2000 times. There appears to be a gap in recall rates for lexemes that have been seen a middling number of times. A recency bias effect may explain why the most recently introduced lexemes have higher recall rates than those that have been seen multiple times. However, those that have been seen many more times than that are likely to have been committed to memory at that point and will have high recall rates as compared to in between when the user may not have learned the concept yet.
+```{r figure2and3, echo=FALSE}
+knitr::include_graphics("plots/figure2.png")
+knitr::include_graphics("plots/figure3.png")
+```
+
+  In Figure 2, we plot the number of times that an individual has been exposed to a given lexeme against their recall of that lexeme in their most recent session. We see generally a trend that the user is more likely to recall recently introduced lexemes as well as those that have been introduced over 2000 times. There appears to be a gap in recall rates for lexemes that have been seen a middling number of times. A recency bias effect may explain why the most recently introduced lexemes have higher recall rates than those that have been seen multiple times. However, those that have been seen many more times than that are likely to have been committed to memory at that point and will have high recall rates as compared to in between when the user may not have learned the concept yet.
   
-  Figure 1.3 also shows us the times an individual has correctly identified a lexeme in an exercise as compared to their recall rate in their most recent study session. Here we see a slight positive trend similar to in Figure 1.2. Users that have correctly identified a lexeme in the past are likely to continue to do so.
+  Figure 3 also shows us the times an individual has correctly identified a lexeme in an exercise as compared to their recall rate in their most recent study session. The dip in the middle is shared with Figure 2 but the effect is likely lessened as if a user is able to succesfully recall a term, it is a stronger indicator than if they have merely been exposed to it. Here we see a slight positive trend similar to in Figure 2. Users that have correctly identified a lexeme in the past are likely to continue to do so.
   
   Across all three graphs, the graph of the mean values across all points follows roughly the same trends which suggests that any conclusiosn we can draw on one group will also be applicable to any others.
 
 ## Model
 
 ```{r fit_model, echo=FALSE, include=FALSE}
+
+#Fit all our models on subsets of the data
 
 # Overall model, all languages
 data_model <- glm(learned ~ delta + history_seen + history_correct, 
@@ -171,9 +196,9 @@ de_eng_model <- glm(learned ~ delta + history_seen + history_correct,
 
 $$Pr(lexeme\ retained) = logit^{-1}(\beta_0 + \beta_1x_{delta} + \beta_2x_{history\ seen} + \beta_3x_{history\ correct})$$
 
-  This model is appropriate for our analysis since learning has been defined in such a way that it is a binary categorical variable. and we would like to see how given information regarding an individual's socioeconomic conditions, if there is any bias towards their predicted sex. Assuming that there is little to no gender inequality, we expect to find that sex and socioeconomic status are independent. However, if we find that some socioeconomic factors are linked to sex, then we can infer that there is some element of bias within society that skews towards that result.
+  This model is appropriate for our analysis since learning has been defined in such a way that it is a binary categorical variable and all the other dependent variables can be entered in as numerical values without further manipulation.
 
-  In our model, the features entered were delta, history seen, and history correct. Delta enters into our model as it represents the time between the last session. Intuitively it is likely that if the time between a user reviewing a lexeme is longer, the less likely an individual will remember that word. However, repeated revision as represented by the variables of history seen and history correct are also good indicators of whether a lexeme is retained since these are more likely to enter an individual's long-term memory. These variables refer to the total number of times the user has seen the given lexeme in all previous sessions and correct is the number of times they have responded correctly to a question involving the given lexeme. In particular, a user's history of correctly identifying the lexeme is the most obviously related to their ability to recall it again since it demonstrates that they have been able to recall it in the past.
+  In our model, the features entered were delta, history seen, and history correct. Delta enters into our model as it represents the time in seconds between the last session. Intuitively it is likely that if the time between a user reviewing a lexeme is longer, the less likely an individual will remember that word. However, repeated revision as represented by the variables of history seen and history correct are also good indicators of whether a lexeme is retained since these are more likely to enter an individual's long-term memory. These variables refer to the total number of times the user has seen the given lexeme in all previous sessions and correct is the number of times they have responded correctly to a question involving the given lexeme. In particular, a user's history of correctly identifying the lexeme is the most obviously related to their ability to recall it again since it demonstrates that they have been able to recall it in the past.
   
   We settle upon this final model after using backwards stepwise regression with AIC (Akaike's Information Criterion) to establish the most parsimonious model using the fewest and most significant predictors from our entire dataset. AIC acts as an indicator of how well our predictors are able to model the data and is used as a metric to minimize the number of predictors required to capture to model the relationship.
 
@@ -183,12 +208,13 @@ The model used was fit using the glm() function from the base R package.
 
   Strictly linear models such as ordinary or multiple linear regression models were immediately excluded since they require that our be numerical which is clearly not the case for our binary variable.
 
-  Bayesian models require that we have information about the approximate distribution of the data (which we refer to as a prior) for the model. They are also best used when the prior is informative in some way as to the distribution that models the data. However since there are no clear trends from the GSS we cannot assume anything more than a uniform probability distribution for the distributions which is a non-informative prior. Thus, we do not use a Bayesian model.
+  Bayesian models were also excluded on the basis that they use informative priors to guide the regression. Having an informative prior is predicated on having information about the approximate distribution of the data that the model will be fit on. Since there are no clear trends to be found in our predictor variables nor any explained in the Duolingo dataset, our analysis would not assume any sort of informative prior.
   
 ## Results
 
-```{r plot, echo=FALSE, include=FALSE}
+```{r models, echo=FALSE, include=FALSE}
 
+# View model information for coefficients
 summary(data_model)
 
 summary(de_eng_model)
@@ -200,16 +226,20 @@ summary(fr_eng_model)
 summary(eng_it_model)
 
 ```
+
 The overall model fit over all of the data samples results in the following logistic regression model:
 
 $$ (1)\ Pr(lexeme\ retained) = logit^{-1}(1.643 - (2.990 *10^{-8}){delta} - 0.782 * {history\ seen} + 0.895 * {history\ correct})$$
 
-We can also find in 
-In the case of English to German, we get
+We can also find the following models (2), (3), and (4) which represent English to German, Spanish, and French respectively.
 
-$$ (2)\ Pr(lexeme\ retained) = logit^{-1}(1.671 - (3.375 *10^{-8}){delta} - 0.135 * {history\ seen} + 0.155 * {history\ correct}) \newline
-   (3)\ Pr(lexeme\ retained) = logit^{-1}(1.686 - (2.573 *10^{-8}){delta} - 0.721 * {history\ seen} + 0.835 * {history\ correct}) \newline
-   (4)\ Pr(lexeme\ retained) = logit^{-1}(1.499 - (2.573 *10^{-8}){delta} - 0.721 * {history\ seen} + 0.835 * {history\ correct}) \newline $$
+$$ (2)\ Pr(lexeme\ retained) = logit^{-1}(1.671 - (3.375 *10^{-8}){delta} - 0.135 * {history\ seen} + 0.155 * {history\ correct}) $$
+
+$$
+   (3)\ Pr(lexeme\ retained) = logit^{-1}(1.686 - (2.573 *10^{-8}){delta} - 0.721 * {history\ seen} + 0.835 * {history\ correct}) $$
+   
+$$
+   (4)\ Pr(lexeme\ retained) = logit^{-1}(1.499 - (2.573 *10^{-8}){delta} - 0.721 * {history\ seen} + 0.835 * {history\ correct}) $$
 
 For the model representing the learning of Italian to English speakers, we end up with a logistic regression model with the following coefficients.
 
@@ -229,9 +259,13 @@ $$ (5)\ Pr(lexeme\ retained) = logit^{-1}(1.811 - (4.368 *10^{-8}){delta} - 0.72
   
   This model actually allows us to find the optimal time for the app to review a lexeme as we can algebraically manipulate the logistic regression model equation to find the exact value of delta given.
   
-  $$log(\frac{p}{1-p}) = \beta_0 + \beta_1x_{delta} + \beta_2x_{history\ seen} + \beta_3x_{history\ correct} \newline
-    \frac{p}{1-p} = e^{\beta_0 + \beta_1x_{delta} + \beta_2x_{history\ seen} + \beta_3x_{history\ correct}} \newline
-    p = \frac{e^{\beta_0 + \beta_1x_{delta} + \beta_2x_{history\ seen} + \beta_3x_{history\ correct}}}{1 + e^{\beta_0 + \beta_1x_{delta} + \beta_2x_{history\ seen} + \beta_3x_{history\ correct}}} \newline
+  $$log(\frac{p}{1-p}) = \beta_0 + \beta_1x_{delta} + \beta_2x_{history\ seen} + \beta_3x_{history\ correct} $$
+  
+  $$\frac{p}{1-p} = e^{\beta_0 + \beta_1x_{delta} + \beta_2x_{history\ seen} + \beta_3x_{history\ correct}}$$
+  
+  $$p = \frac{e^{\beta_0 + \beta_1x_{delta} + \beta_2x_{history\ seen} + \beta_3x_{history\ correct}}}{1 + e^{\beta_0 + \beta_1x_{delta} + \beta_2x_{history\ seen} + \beta_3x_{history\ correct}}}$$
+  
+  $$
     p = \frac{1}{1 + e^{-(\beta_0 + \beta_1x_{delta} + \beta_2x_{history\ seen} + \beta_3x_{history\ correct})}}
     $$
   By setting the probability $p$ to an arbitrary threshold value (0.5 as used in the actual Duolingo method of half-life regression) and inputting the user's history with that lexeme, we can use the above formula to find the correct value of delta we should wait before reviewing a concept.
@@ -244,7 +278,7 @@ $$ (5)\ Pr(lexeme\ retained) = logit^{-1}(1.811 - (4.368 *10^{-8}){delta} - 0.72
   
    Another limitation is that Duolingo's course structure for each language are partially community sourced and may not all be of the same quality. Popular language pairs that have been supported for longer such as English for Spanish speakers or French for English speakers may be of higher quality than more obscure and/or newly supported languages.
    
-   Our analysis has also been limited to Germanic and Romance languages within the European sprachbund. Existing bodies of research show that the ease of learning a new foreign language is heavily affected by any existing languages that the individual speaks (Broersma, et al. 2016). Although the general patterns of repeated exposure can be generalized to all language, the degree to which they affect an indivudal's ability to pick up a specific language will depend on how structurally similar the languages are. 
+   Our analysis has also been limited to Germanic and Romance languages within the European sprachbund (a group of languages with shared features due to language contact and not genetic relationship). Existing bodies of research show that the ease of learning a new foreign language is heavily affected by any existing languages that the individual speaks (Broersma, et al. 2016). Although the general patterns of repeated exposure can be generalized to all language, the degree to which they affect an indivudal's ability to pick up a specific language will depend on how structurally similar the languages are. 
   
   Additionally, the platform of Duolingo may also lead to some level of self-reporting bias. Long term users of the app are likely to be more dedicated to learning a new language than those who have only recently or occasionally used the app. No distinction between these two groups is made in the dataset and we may find statistically significant differences between users who consistently use the platform as opposed to those who do not.
   
