@@ -1,5 +1,5 @@
 # STA304 Final Project: Exploring Foreign Language Education
-Is there a better path towards second language acquisiton?
+Is there a better path towards second language acquisition?
 
 # Overview
 This repo contains the RProject used to analyze the Duolingo dataset through logistic regression. It contains samples of 13 million users and their interactions with the Duolingo platform along with logs of their performance. We also include a report detailing our methodology and analysis, along with our findings.
